@@ -10,18 +10,21 @@ export default function App() {
   const [studies, setStudies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     let ignore = false; // stops an old request from overwriting a newer one
 
     async function loadStudies() {
+      const params = new URLSearchParams({
+        "query.cond": query,
+        pageSize: "20",
+      });
+      if (status) params.set("filter.overallStatus", status);
+
       setLoading(true);
       setError(null);
       try {
-        const params = new URLSearchParams({
-          "query.cond": query,
-          pageSize: "20",
-        });
         const res = await fetch(`${BASE_URL}?${params}`);
         if (!res.ok) throw new Error(`Request failed (${res.status})`);
         const data = await res.json();
@@ -40,7 +43,7 @@ export default function App() {
     return () => {
       ignore = true;
     };
-  }, [query]);
+  }, [query, status]);
 
   function handleSearch(e) {
     e.preventDefault();
@@ -58,6 +61,17 @@ export default function App() {
           placeholder="Search a condition, e.g. asthma"
           aria-label="Condition"
         />
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          aria-label="Recruitment status"
+        >
+          <option value="">All statuses</option>
+          <option value="RECRUITING">Recruiting</option>
+          <option value="NOT_YET_RECRUITING">Not yet recruiting</option>
+          <option value="ACTIVE_NOT_RECRUITING">Active, not recruiting</option>
+          <option value="COMPLETED">Completed</option>
+          </select>
         <button type="submit">Search</button>
       </form>
 
