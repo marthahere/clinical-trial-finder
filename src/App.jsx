@@ -11,6 +11,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("");
+  const [showSummaries, setShowSummaries] = useState(false);
 
   useEffect(() => {
     let ignore = false; // stops an old request from overwriting a newer one
@@ -73,16 +74,27 @@ export default function App() {
           <option value="COMPLETED">Completed</option>
           </select>
         <button type="submit">Search</button>
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={showSummaries}
+            onChange={(e) => setShowSummaries(e.target.checked)}
+          />
+          Show all summaries
+        </label>
       </form>
 
       {loading && <p>Loading studies…</p>}
       {error && <p role="alert">Couldn't load studies: {error}</p>}
-      {!loading && !error && studies.length === 0 && <p>No studies found.</p>}
+      {!loading && !error && studies.length === 0 && (
+        <p>No studies matched your search. Try a different condition or recruitment status.</p>
+      )}
 
       {studies.map((s, i) => (
         <StudyCard
           key={s.protocolSection?.identificationModule?.nctId ?? i}
           study={s}
+          showSummary={showSummaries}
         />
       ))}
     </main>

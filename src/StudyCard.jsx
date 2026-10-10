@@ -1,4 +1,4 @@
-export default function StudyCard({ study }) {
+export default function StudyCard({ study, showSummary }) {
   const p = study.protocolSection;
   const id = p?.identificationModule;
   const status = p?.statusModule?.overallStatus;
@@ -17,13 +17,16 @@ export default function StudyCard({ study }) {
       <h2>{id?.briefTitle ?? "Untitled study"}</h2>
       <p className="status">{status ?? "Status unknown"}</p>
       <p className="meta">
-        Phase: {phases.length ? phases.join(", ") : "Not listed"} · Last
-        updated: {updated ?? "Unknown"}
+        Phase: {phases.length ? phases.join(", ") : "Not listed"}
+        <span className="meta-separator" aria-hidden="true">
+          |
+        </span>
+        Last updated: {updated ?? "Unknown"}
       </p>
       <p className="locations">{places || "No location listed"}</p>
 
       {summary && (
-        <details>
+        <details open={showSummary}>
           <summary>Study summary</summary>
           <p>{summary}</p>
         </details>
