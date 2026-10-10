@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import StudyCard from "./StudyCard";
 import "./App.css";
 
+const PAGE_SIZE = 20;
 const BASE_URL = "https://clinicaltrials.gov/api/v2/studies";
 
 export default function App() {
@@ -13,26 +14,37 @@ export default function App() {
   const [status, setStatus] = useState("");
   const [showSummaries, setShowSummaries] = useState(false);
 
+  function handleSearch(event) {
+    event.preventDefault();
+    setQuery(input.trim());
+  }
+
   useEffect(() => {
-    let ignore = false; // stops an old request from overwriting a newer one
+    let ignore = false;
 
     async function loadStudies() {
-      const params = new URLSearchParams({
-        "query.cond": query,
-        pageSize: "20",
-      });
-      if (status) params.set("filter.overallStatus", status);
-
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`${BASE_URL}?${params}`);
+        const params = new URLSearchParams({
+          "query.cond": query,
+          pageSize: String(PAGE_SIZE),
+        });
+        if (status) params.set("filter.overallStatus", status);
+
+        const res = await fetch(`${BASE_URL}?${params}`, {
+          signal: AbortSignal.timeout(10000), // give up after 10 seconds
+        });
         if (!res.ok) throw new Error(`Request failed (${res.status})`);
         const data = await res.json();
-        if (!ignore) setStudies(data.studies ?? []);
+        if (!ignore) setStudies(Array.isArray(data?.studies) ? data.studies : []);
       } catch (err) {
         if (!ignore) {
-          setError(err.message);
+          setError(
+            err.name === "TimeoutError"
+              ? "The request took too long. Please try again."
+              : err.message
+          );
           setStudies([]);
         }
       } finally {
@@ -40,16 +52,11 @@ export default function App() {
       }
     }
 
-    loadStudies();
-    return () => {
-      ignore = true;
-    };
-  }, [query, status]);
-
-  function handleSearch(e) {
-    e.preventDefault();
-    setQuery(input.trim());
-  }
+  loadStudies();
+  return () => {
+    ignore = true;
+  };
+}, [query, status]);
 
   return (
     <main>
@@ -97,6 +104,13 @@ export default function App() {
           showSummary={showSummaries}
         />
       ))}
+
+      {!loading && !error && studies.length === PAGE_SIZE && (
+      <p className="limit-note">
+        Showing the first {PAGE_SIZE} results only. More studies may match, so try
+        a more specific search or a status filter to narrow things down.
+      </p>
+      )}
     </main>
   );
 }
