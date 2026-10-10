@@ -12,7 +12,7 @@ main {
   margin-bottom: 1rem;
   flex-wrap: wrap;
 }
-.controls input {
+.controls > input {
   flex: 1;
   min-width: 200px;
   padding: 0.5rem;
@@ -20,6 +20,27 @@ main {
 .controls select,
 .controls button {
   padding: 0.5rem;
+}
+.controls button {
+  color: #fff;
+  background: #2563eb;
+  border: 1px solid #2563eb;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  font-size: 0.9rem;
+  margin-top: 0.35rem;
+}
+
+.toggle input {
+  margin: 0;
+  transform: translateY(1px);
 }
 
 .card {
@@ -30,29 +51,24 @@ main {
 }
 .card h2 {
   font-size: 1.1rem;
-  margin: 0 0 0.5rem;
-}
-.card details {
-  margin: 0.5rem 0;
+  margin: 0.3rem 0;
 }
 .card a {
   display: inline-block;
-  margin-top: 0.5rem;
+  margin: 0.3rem 0;
 }
 
 .status {
-  font-weight: 600;
-  margin: 0;
+  margin: 0.3rem 0;
 }
 .meta {
   color: #444;
   font-size: 0.9rem;
-  margin: 0.25rem 0;
+  margin: 0.90rem 0 0.3rem;
 }
-
 .locations {
   color: #666;
-  margin: 0.25rem 0 0;
+  margin: 0.3rem 0;
 }
 
 .badge { 
@@ -88,23 +104,17 @@ main {
   color: #7a5c2e; 
 }
 
-.meta { 
-  color: #444; 
-  font-size: .9rem; 
-  margin: .25rem 0; 
+.card details {
+  margin: 0.3rem 0;
 }
 
-.card details { 
-  margin: .5rem 0; 
-}
-
-.card a { 
-  display: inline-block; 
-  margin-top: .5rem; 
+.card details > p {
+  margin: 0.3rem 0 0;
 }
 
 .card summary { 
   cursor: pointer; list-style: none; 
+  font-size: 0.9rem;
 }
 
 .card summary::-webkit-details-marker { 
@@ -116,7 +126,7 @@ main {
   display: inline-block;
   width: 0.75rem;
   height: 0.75rem;
-  margin-right: 0.3rem;
+  margin-right: 0.45rem;
   position: relative;
   top: -1px;
   vertical-align: middle;
